@@ -1,15 +1,19 @@
 package it.polito.tdp.formulaone;
 
+import java.awt.color.CMMException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.formulaone.model.Model;
+import it.polito.tdp.formulaone.model.Season;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 
 public class FormulaOneController {
 
@@ -22,7 +26,7 @@ public class FormulaOneController {
     private URL location;
 
     @FXML // fx:id="boxAnno"
-    private ComboBox<?> boxAnno; // Value injected by FXMLLoader
+    private ComboBox<Season> boxAnno; // Value injected by FXMLLoader
 
     @FXML // fx:id="btnSelezionaStagione"
     private Button btnSelezionaStagione; // Value injected by FXMLLoader
@@ -44,10 +48,26 @@ public class FormulaOneController {
 
     @FXML
     void doSelezionaStagione(ActionEvent event) {
-    	txtResult.setText("btn Seleziona stagione premuto");
+    	Season annoInput=boxAnno.getValue();
+    	
+    	if(annoInput !=  null) {
+    		String ris= model.creaGrafo(annoInput);
+    		txtResult.setText(ris);
+    	}else {
+    		showAlert("Selezionare una stagione!");
+    	}
+    	
     }
 
-    @FXML
+    private void showAlert(String message) {
+    	Alert alert = new Alert(AlertType.ERROR);
+		alert.setContentText(message);
+		alert.show();
+
+		
+	}
+
+	@FXML
     void doSimulaGara(ActionEvent event) {
     	txtResult.setText("btn simula gara premuto");
     }
@@ -65,6 +85,7 @@ public class FormulaOneController {
 
 	public void setModel(Model model) {
 		this.model = model;
+		boxAnno.getItems().addAll(model.getAnni());
 		
 	}
 }
